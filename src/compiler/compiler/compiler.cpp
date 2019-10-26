@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
-#include <experimental/filesystem>
+#include <boost/filesystem.hpp>
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/TargetSelect.h"
@@ -21,7 +21,8 @@
 #include "../utils/utils.hpp"
 #include "compiler.hpp"
 
-using namespace std::experimental;
+//using namespace std::experimental;
+using namespace boost;
 
 std::string self_app_path;
 
@@ -175,7 +176,7 @@ int compile(int argc, char** argv) {
     module->print(stream, nullptr);
     auto commands = get_compile_commands(argc, argv);
     for (auto& command : commands) {
-        bool is_failed = system(command.c_str());
+        bool is_failed = ::system(command.c_str());
         if (is_failed) {
             std::cout << "compilation failed.\n....Don't mind!" << std::endl;
             commands.push_back("rm " + abs("tmp") + "/*.s");

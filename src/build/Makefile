@@ -1,6 +1,6 @@
-LLVM_LINK_OPTION := `llvm-config --cxxflags --system-libs --ldflags --libs core` -fexceptions -O3 -std=gnu++17 -std=c++17 -lstdc++fs
-LLVM_OPTION := -I/usr/lib/llvm-6.0/include
-CC := g++ -std=gnu++17 -std=c++17 -lstdc++fs -O3
+LLVM_LINK_OPTION := `/usr/local/opt/llvm@8/bin/llvm-config --cxxflags --system-libs --ldflags --libs all` -fexceptions -O3 -std=gnu++17 -std=c++17 -lboost_filesystem
+LLVM_OPTION := -I/usr/local/opt/llvm@8/include -I/usr/local/opt/flex/include
+CC := clang++ -std=gnu++17 -std=c++17 -O3
 all: blawn
 blawn: builtins.o errors.o main.o compiler.o driver.o node.o parser.o lexer.o ast_generator.o node.o ir_generator.o utils.o blawn_context.o errors.o
 	$(CC) -g -o blawn main.o compiler.o driver.o parser.o lexer.o ast_generator.o \
@@ -18,7 +18,7 @@ parser/parser.tab.cc ../compiler/parser/parser.tab.hh: ../compiler/parser/parser
 	cd ../compiler/parser && bison -d parser.yy -r all --report-file=log.log
 	cd ../compiler/parser && python3 patch.py
 lexer.o: ../compiler/parser/lexer.ll
-	cd ../compiler/parser && flex++ -d lexer.ll
+	cd ../compiler/parser && /usr/local/opt/flex/bin/flex++ -d lexer.ll
 	$(CC) -g -c -o lexer.o ../compiler/parser/lex.yy.cc $(LLVM_OPTION)
 main.o: ../compiler/parser/main.cpp
 	$(CC) -g -c -o main.o ../compiler/parser/main.cpp $(LLVM_OPTION)
