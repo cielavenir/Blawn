@@ -114,6 +114,8 @@ std::vector<std::string> get_imports(std::string filename) {
     return imports;
 }
 
+extern "C" int _NSGetExecutablePath(char* buf, uint32_t* bufsize);
+
 int compile(int argc, char** argv) {
     if (argc == 1) {
         std::cerr << "no input file!" << std::endl;
@@ -121,8 +123,10 @@ int compile(int argc, char** argv) {
     }
     std::string filename = argv[1];
     char buf[1000];
-    readlink("/proc/self/exe", buf, 1000);
-    self_app_path = filesystem::absolute(buf).parent_path().string();
+    //readlink("/proc/self/exe", buf, 1000);
+	uint32_t exelen = 1000;
+	_NSGetExecutablePath(buf,&exelen);
+    self_app_path = filesystem::canonical(buf).parent_path().string();
     std::string expanded_filename =
         abs("tmp/" + utils::get_filename(filename) + ".blawn");
     std::ofstream expand_file(expanded_filename);
